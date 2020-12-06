@@ -5,6 +5,7 @@ extern crate lazy_static;
 // use chrono::prelude::*;
 use regex::Regex;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::fs::File;
@@ -17,12 +18,29 @@ fn main() -> std::io::Result<()> {
     // ];
     // let local = Local::now();
     // let answer = days.get(local.day() as usize).map(|f| f()).flatten();
-    if let Some(a) = day05() {
+    if let Some(a) = day06() {
         a.tell()
     } else {
         println!("Failed to calculate");
     }
     Ok(())
+}
+
+fn day06() -> Option<Answer<usize>> {
+    let mut answer = Answer::new();
+    let values = parse_customs_answers("inputs/day06.txt")?;
+    answer.part1(values.iter().map(|answers| answers.len()).sum());
+    Some(answer)
+}
+
+fn parse_customs_answers(filename: &str) -> Option<Vec<HashSet<char>>> {
+    Some(
+        read_file(filename)?
+            .replace('\r', "")
+            .split("\n\n")
+            .map(|chunk| chunk.replace('\n', "").chars().collect())
+            .collect(),
+    )
 }
 
 fn day05() -> Option<Answer<u32>> {
@@ -358,12 +376,6 @@ impl<T: Copy + Default + Display> Answer<T> {
         print!("Part 2: ");
         println!("{}", self._part2.unwrap_or_default());
     }
-}
-
-fn day06() -> Option<Answer<i32>> {
-    let mut answer = Answer::new();
-    let values: Vec<i32> = parse_file("inputs/day06.txt")?;
-    Some(answer)
 }
 
 fn day07() -> Option<Answer<i32>> {
