@@ -35,33 +35,32 @@ fn day07() -> Result<Answer<usize>, String> {
     Ok(answer)
 }
 
-fn bag_count(rules: &HashMap<String, Vec<(usize, String)>>, color: &str) -> Option<usize> {
+struct BagRule {
+    pub count: usize,
+    pub dependency: String,
+}
+type BagRules = HashMap<String, Vec<BagRule>>;
+
+fn bag_count(rules: &BagRules, color: &str) -> Option<usize> {
     let contents = rules.get(color)?;
     let count: usize = contents
         .iter()
-        .filter_map(|(count, dependency)| bag_count(rules, dependency).map(|x| count * x))
+        .filter_map(|rule| bag_count(rules, &rule.dependency).map(|x| rule.count * x))
         .sum();
     Some(1 + count)
 }
 
-fn can_contain_shiny_gold(
-    rules: &HashMap<String, Vec<(usize, String)>>,
-    color: &str,
-) -> Option<bool> {
+fn can_contain_shiny_gold(rules: &BagRules, color: &str) -> Option<bool> {
     let contents = rules.get(color)?;
     Some(
-        contents
-            .iter()
-            .map(|(_, dependency)| dependency)
-            .any(|dependency| {
-                *dependency == *"shiny gold"
-                    || can_contain_shiny_gold(rules, dependency).unwrap_or(false)
-            }),
+        contents.iter().map(|rule| &rule.dependency).any(|dep| {
+            *dep == *"shiny gold" || can_contain_shiny_gold(rules, &dep).unwrap_or(false)
+        }),
     )
 }
 
-fn parse_bag_rules(file: &str) -> Result<HashMap<String, Vec<(usize, String)>>, String> {
-    let mut parsed: HashMap<String, Vec<(usize, String)>> = HashMap::new();
+fn parse_bag_rules(file: &str) -> Result<BagRules, String> {
+    let mut parsed = HashMap::new();
     for line in file.lines() {
         let mut contains = Vec::new();
         let mut split = line.split(" bags contain ");
@@ -79,7 +78,10 @@ fn parse_bag_rules(file: &str) -> Result<HashMap<String, Vec<(usize, String)>>, 
                     .parse()
                     .map_err(|_| format!("Failed to parse number: {:?}", rule))?;
                 let color = &rule[1..].trim();
-                contains.push((count, color.to_string()));
+                contains.push(BagRule {
+                    count,
+                    dependency: color.to_string(),
+                });
             }
         }
         parsed.insert(color.to_string(), contains);
