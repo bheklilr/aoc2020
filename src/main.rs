@@ -77,11 +77,8 @@ fn parse_bag_rules(file: &str) -> Result<BagRules, String> {
                 let count = rule[..1]
                     .parse()
                     .map_err(|_| format!("Failed to parse number: {:?}", rule))?;
-                let color = &rule[1..].trim();
-                contains.push(BagRule {
-                    count,
-                    dependency: color.to_string(),
-                });
+                let dependency = rule[1..].trim().to_string();
+                contains.push(BagRule { count, dependency });
             }
         }
         parsed.insert(color.to_string(), contains);
