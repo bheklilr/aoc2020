@@ -12,18 +12,79 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::str::FromStr;
 
-fn main() -> std::io::Result<()> {
+fn main() -> Result<(), String> {
     // let days: Vec<fn() -> Option<Answer<i32>>> = vec![
     //     day01, day02, day03, day04, day05, day06, day07, day08, day09, day10,
     // ];
     // let local = Local::now();
     // let answer = days.get(local.day() as usize).map(|f| f()).flatten();
-    if let Some(a) = day06() {
-        a.tell()
-    } else {
-        println!("Failed to calculate");
-    }
+    day07()?.tell();
     Ok(())
+}
+
+fn day07() -> Result<Answer<usize>, String> {
+    let mut answer = Answer::new();
+    let rules = parse_bag_rules(&read_file("inputs/day07.txt").ok_or("Failed to read file")?)?;
+    answer.part1(
+        rules
+            .keys()
+            .filter(|color| can_contain_shiny_gold(&rules, color).unwrap_or(false))
+            .count(),
+    );
+    answer.part2(bag_count(&rules, "shiny gold").unwrap() - 1);
+    Ok(answer)
+}
+
+fn bag_count(rules: &HashMap<String, Vec<(usize, String)>>, color: &str) -> Option<usize> {
+    let contents = rules.get(color)?;
+    let count: usize = contents
+        .iter()
+        .filter_map(|(count, dependency)| bag_count(rules, dependency).map(|x| count * x))
+        .sum();
+    Some(1 + count)
+}
+
+fn can_contain_shiny_gold(
+    rules: &HashMap<String, Vec<(usize, String)>>,
+    color: &str,
+) -> Option<bool> {
+    let contents = rules.get(color)?;
+    Some(
+        contents
+            .iter()
+            .map(|(_, dependency)| dependency)
+            .any(|dependency| {
+                *dependency == *"shiny gold"
+                    || can_contain_shiny_gold(rules, dependency).unwrap_or(false)
+            }),
+    )
+}
+
+fn parse_bag_rules(file: &str) -> Result<HashMap<String, Vec<(usize, String)>>, String> {
+    let mut parsed: HashMap<String, Vec<(usize, String)>> = HashMap::new();
+    for line in file.lines() {
+        let mut contains = Vec::new();
+        let mut split = line.split(" bags contain ");
+        let color = split.next().ok_or("No initial color")?;
+        let rules = split.next().ok_or("No dependency colors")?;
+        for rule in rules.split(',') {
+            let rule = rule
+                .trim()
+                .replace("bags", "")
+                .replace("bag", "")
+                .replace('.', "");
+            let rule = rule.trim();
+            if !(rule.starts_with("no other")) {
+                let count = rule[..1]
+                    .parse()
+                    .map_err(|_| format!("Failed to parse number: {:?}", rule))?;
+                let color = &rule[1..].trim();
+                contains.push((count, color.to_string()));
+            }
+        }
+        parsed.insert(color.to_string(), contains);
+    }
+    Ok(parsed)
 }
 
 fn day06() -> Option<Answer<usize>> {
@@ -45,7 +106,8 @@ fn day06() -> Option<Answer<usize>> {
                     }
                 }
                 let people = group.len();
-                unique_answers.iter()
+                unique_answers
+                    .iter()
                     .filter(|(_ans, count)| **count == people)
                     .count()
             })
@@ -407,12 +469,6 @@ impl<T: Copy + Default + Display> Answer<T> {
         print!("Part 2: ");
         println!("{}", self._part2.unwrap_or_default());
     }
-}
-
-fn day07() -> Option<Answer<i32>> {
-    let mut answer = Answer::new();
-    let values: Vec<i32> = parse_file("inputs/day07.txt")?;
-    Some(answer)
 }
 
 fn day08() -> Option<Answer<i32>> {
