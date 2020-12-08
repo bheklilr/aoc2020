@@ -1,8 +1,8 @@
 use crate::prelude::*;
 
-pub fn day07() -> Result<Answer<usize>, String> {
+pub fn day07() -> R<Answer<usize>> {
     let mut answer = Answer::new();
-    let rules = parse_bag_rules(&read_file("inputs/day07.txt").ok_or("Failed to read file")?)?;
+    let rules = parse_bag_rules(&read_file("inputs/day07.txt")?)?;
     answer.part1(
         rules
             .keys()
@@ -37,7 +37,7 @@ fn can_contain_shiny_gold(rules: &BagRules, color: &str) -> Option<bool> {
     )
 }
 
-fn parse_bag_rules(file: &str) -> Result<BagRules, String> {
+fn parse_bag_rules(file: &str) -> R<BagRules> {
     let mut parsed = HashMap::new();
     for line in file.lines() {
         let mut contains = Vec::new();

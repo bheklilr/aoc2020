@@ -9,21 +9,20 @@ pub use std::str::FromStr;
 
 pub type R<T> = Result<T, String>;
 
-pub fn read_file(filename: &str) -> Option<String> {
-    let mut file = File::open(filename).ok()?;
+pub fn read_file(filename: &str) -> R<String> {
+    let mut file = File::open(filename).map_err(|_| "Failed to open file")?;
     let mut contents = String::new();
-    file.read_to_string(&mut contents).ok()?;
+    file.read_to_string(&mut contents)
+        .map_err(|_| "Failed to read file")?;
 
-    Some(contents)
+    Ok(contents)
 }
 
-pub fn parse_file<T: FromStr>(filename: &str) -> Option<Vec<T>> {
-    Some(
-        read_file(filename)?
-            .split_whitespace()
-            .filter_map(|line| line.parse::<T>().ok())
-            .collect(),
-    )
+pub fn parse_file<T: FromStr>(filename: &str) -> R<Vec<T>> {
+    Ok(read_file(filename)?
+        .split_whitespace()
+        .filter_map(|line| line.parse::<T>().ok())
+        .collect())
 }
 
 pub struct Answer<T> {

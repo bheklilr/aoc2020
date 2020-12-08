@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn day02() -> Option<Answer<i32>> {
+pub fn day02() -> R<Answer<i32>> {
     let mut answer = Answer::new();
     let values: &Vec<PasswordPolicy> = &parse_passwords("inputs/day02.txt")?;
     answer.part1(
@@ -12,7 +12,7 @@ pub fn day02() -> Option<Answer<i32>> {
 
     answer.part2(values.iter().filter(|pp| pp.is_valid_toboggan_pw()).count() as i32);
 
-    Some(answer)
+    Ok(answer)
 }
 
 #[derive(Debug)]
@@ -69,11 +69,9 @@ impl FromStr for PasswordPolicy {
     }
 }
 
-fn parse_passwords(filename: &str) -> Option<Vec<PasswordPolicy>> {
-    Some(
-        read_file(filename)?
-            .lines()
-            .filter_map(|line| line.parse::<PasswordPolicy>().ok())
-            .collect(),
-    )
+fn parse_passwords(filename: &str) -> R<Vec<PasswordPolicy>> {
+    Ok(read_file(filename)?
+        .lines()
+        .filter_map(|line| line.parse::<PasswordPolicy>().ok())
+        .collect())
 }

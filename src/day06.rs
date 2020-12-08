@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn day06() -> Option<Answer<usize>> {
+pub fn day06() -> R<Answer<usize>> {
     let mut answer = Answer::new();
     let values = parse_customs_answers("inputs/day06.txt")?;
     answer.part1(values.iter().map(|answers| answers.len()).sum());
@@ -26,11 +26,11 @@ pub fn day06() -> Option<Answer<usize>> {
             })
             .sum(),
     );
-    Some(answer)
+    Ok(answer)
 }
 
-fn parse_customs_answers2(filename: &str) -> Option<Vec<Vec<Vec<char>>>> {
-    Some(
+fn parse_customs_answers2(filename: &str) -> R<Vec<Vec<Vec<char>>>> {
+    Ok(
         read_file(filename)?
             .replace('\r', "")
             .split("\n\n")
@@ -39,8 +39,8 @@ fn parse_customs_answers2(filename: &str) -> Option<Vec<Vec<Vec<char>>>> {
     )
 }
 
-fn parse_customs_answers(filename: &str) -> Option<Vec<HashSet<char>>> {
-    Some(
+fn parse_customs_answers(filename: &str) -> R<Vec<HashSet<char>>> {
+    Ok(
         read_file(filename)?
             .replace('\r', "")
             .split("\n\n")

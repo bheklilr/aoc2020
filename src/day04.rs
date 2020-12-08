@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn day04() -> Option<Answer<usize>> {
+pub fn day04() -> R<Answer<usize>> {
     use Field::*;
     let mut answer = Answer::new();
     let passports = parse_passports("inputs/day04.txt")?;
@@ -69,7 +69,7 @@ pub fn day04() -> Option<Answer<usize>> {
             })
             .count(),
     );
-    Some(answer)
+    Ok(answer)
 }
 
 #[derive(Debug, Eq, PartialEq, Hash)]
@@ -86,33 +86,31 @@ enum Field {
 
 type Passport = HashMap<Field, String>;
 
-fn parse_passports(filename: &str) -> Option<Vec<Passport>> {
+fn parse_passports(filename: &str) -> R<Vec<Passport>> {
     use Field::*;
     let text = read_file(filename)?;
     let chunks: Vec<&str> = text.split("\r\n\r\n").collect();
-    Some(
-        chunks
-            .iter()
-            .map(|input| {
-                input
-                    .split_whitespace()
-                    .filter_map(|field| {
-                        let parts: Vec<&str> = field.split(':').collect();
-                        let field = match parts[0] {
-                            "byr" => Some(BYR),
-                            "iyr" => Some(IYR),
-                            "eyr" => Some(EYR),
-                            "hgt" => Some(HGT),
-                            "hcl" => Some(HCL),
-                            "ecl" => Some(ECL),
-                            "pid" => Some(PID),
-                            "cid" => Some(CID),
-                            _ => None,
-                        }?;
-                        Some((field, parts[1].trim().to_owned()))
-                    })
-                    .collect()
-            })
-            .collect(),
-    )
+    Ok(chunks
+        .iter()
+        .map(|input| {
+            input
+                .split_whitespace()
+                .filter_map(|field| {
+                    let parts: Vec<&str> = field.split(':').collect();
+                    let field = match parts[0] {
+                        "byr" => Some(BYR),
+                        "iyr" => Some(IYR),
+                        "eyr" => Some(EYR),
+                        "hgt" => Some(HGT),
+                        "hcl" => Some(HCL),
+                        "ecl" => Some(ECL),
+                        "pid" => Some(PID),
+                        "cid" => Some(CID),
+                        _ => None,
+                    }?;
+                    Some((field, parts[1].trim().to_owned()))
+                })
+                .collect()
+        })
+        .collect())
 }

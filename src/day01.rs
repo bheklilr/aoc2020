@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn day01() -> Option<Answer<i32>> {
+pub fn day01() -> R<Answer<i32>> {
     let mut answer = Answer::new();
     let values: Vec<i32> = parse_file("inputs/day01.txt")?;
     let len: usize = values.len();
@@ -18,5 +18,5 @@ pub fn day01() -> Option<Answer<i32>> {
             }
         }
     }
-    Some(answer)
+    Ok(answer)
 }
