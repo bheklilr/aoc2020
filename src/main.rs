@@ -27,8 +27,6 @@ use day09::*;
 use day10::*;
 
 fn main() -> R<()> {
-    if let Some(filename) = env::args().nth(1) {
-        day09(&filename)?.tell()
-    }
+    day09()?.tell();
     Ok(())
 }
