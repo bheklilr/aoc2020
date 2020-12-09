@@ -1,6 +1,7 @@
 pub use regex::Regex;
 pub use std::collections::HashMap;
 pub use std::collections::HashSet;
+pub use std::env;
 pub use std::fmt::Debug;
 pub use std::fmt::Display;
 pub use std::fs::File;
@@ -10,11 +11,10 @@ pub use std::str::FromStr;
 pub type R<T> = Result<T, String>;
 
 pub fn read_file(filename: &str) -> R<String> {
-    let mut file = File::open(filename).map_err(|_| "Failed to open file")?;
+    let mut file = File::open(filename).map_err(|e| format!("Failed to open file {}: {}", filename, e))?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)
-        .map_err(|_| "Failed to read file")?;
-
+        .map_err(|e| format!("Failed to read file {}: {}", filename, e))?;
     Ok(contents)
 }
 
