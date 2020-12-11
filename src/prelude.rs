@@ -1,4 +1,7 @@
 pub use regex::Regex;
+pub use petgraph::Graph;
+pub use petgraph::graph::NodeIndex;
+pub use petgraph::algo;
 pub use std::collections::HashMap;
 pub use std::collections::HashSet;
 pub use std::env;

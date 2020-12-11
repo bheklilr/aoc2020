@@ -27,6 +27,6 @@ use day09::*;
 use day10::*;
 
 fn main() -> R<()> {
-    day09()?.tell();
+    day10()?.tell();
     Ok(())
 }
