@@ -13,6 +13,9 @@ mod day07;
 mod day08;
 mod day09;
 mod day10;
+mod day11;
+mod day12;
+mod day13;
 mod prelude;
 use crate::prelude::*;
 use day01::*;
@@ -25,8 +28,11 @@ use day07::*;
 use day08::*;
 use day09::*;
 use day10::*;
+use day11::*;
+use day12::*;
+use day13::*;
 
 fn main() -> R<()> {
-    day10()?.tell();
+    day11()?.tell();
     Ok(())
 }
