@@ -22,7 +22,7 @@ type BagRules = HashMap<String, Vec<BagRule>>;
 fn bag_count(rules: &BagRules, color: &str) -> Option<usize> {
     let contents = rules.get(color)?;
     let count: usize = contents
-        .iter()
+        .par_iter()
         .filter_map(|rule| bag_count(rules, &rule.dependency).map(|x| rule.count * x))
         .sum();
     Some(1 + count)
@@ -31,7 +31,7 @@ fn bag_count(rules: &BagRules, color: &str) -> Option<usize> {
 fn can_contain_shiny_gold(rules: &BagRules, color: &str) -> Option<bool> {
     let contents = rules.get(color)?;
     Some(
-        contents.iter().map(|rule| &rule.dependency).any(|dep| {
+        contents.par_iter().map(|rule| &rule.dependency).any(|dep| {
             *dep == *"shiny gold" || can_contain_shiny_gold(rules, &dep).unwrap_or(false)
         }),
     )
