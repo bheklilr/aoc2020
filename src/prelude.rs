@@ -4,12 +4,14 @@ pub use petgraph::graph::NodeIndex;
 pub use petgraph::algo;
 pub use std::collections::HashMap;
 pub use std::collections::HashSet;
+pub use std::iter::FromIterator;
 pub use std::env;
 pub use std::fmt::Debug;
 pub use std::fmt::Display;
 pub use std::fs::File;
 pub use std::io::prelude::*;
 pub use std::str::FromStr;
+pub use rayon::prelude::*;
 
 pub type R<T> = Result<T, String>;
 
